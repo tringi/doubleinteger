@@ -666,7 +666,7 @@ bool operator >= (const double_integer <LO, HI> & a,
 //  - and some type_traits overrides
 
 namespace std {
-    template <>
+
     template <typename LO, typename HI>
     struct numeric_limits <double_integer <LO, HI> > {
         static const bool is_specialized = true;
@@ -723,13 +723,11 @@ namespace std {
         static const float_round_style round_style = round_indeterminate;
     };
     
-    template <>
     template <typename LO, typename HI>
     struct make_unsigned <double_integer <LO, HI> > {
         typedef double_integer <LO, LO> type;
     };
 
-    template <>
     template <typename LO, typename HI>
     struct is_integral <double_integer <LO, HI> >
         : std::integral_constant <bool, true> {};
