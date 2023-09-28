@@ -5,7 +5,7 @@
 // double_integer.tcc
 //
 // Author: Jan Ringos, http://Tringi.TrimCore.cz, tringi@trimcore.cz
-// Version: 2.0
+// Version: 2.1
 //
 // License:
 //   This software is provided 'as-is', without any express or implied warranty.
@@ -32,6 +32,8 @@
 //      28.05.2013 - fixed conversion from negative floating point
 //                 - C style fmod, fmodf, fmodl replaced by std::fmod
 //      20.03.2015 - completed C++11 release
+//      29.09.2023 - removed deprecated numeric_limits denorm_absent/has_denorm_loss
+                   - silenced several comparison warnings
 */
 
 #include <climits>
@@ -230,7 +232,7 @@ double_integer <LO, HI> ::div (const double_integer <LO, HI> & _ds,
 
     // correct sign bits
     
-    if ((_ds < zero) ^ (*this < zero)) {
+    if ((_ds < zero) != (*this < zero)) {
         q = -q;
     };
     
@@ -316,6 +318,16 @@ T double_integer <LO, HI> ::mask (std::size_t n) {
     return m;
 };
 
+namespace {
+    template <typename LO, typename HI, typename T>
+    constexpr HI double_integer_init_HI (const T & a) {
+        if constexpr (sizeof (T) > sizeof (LO))
+            return a >> (sizeof (LO) * CHAR_BIT);
+        else
+            return HI ();
+    }
+}
+
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (unsigned char a)
     :   lo (LO (a)),
@@ -324,22 +336,22 @@ double_integer <LO, HI> ::double_integer (unsigned char a)
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (unsigned short a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO) ? (a >> (sizeof (LO) * CHAR_BIT)) : HI ()) {};
+        hi (double_integer_init_HI <LO, HI> (a)) {};
         
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (unsigned int a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO) ? (a >> (sizeof (LO) * CHAR_BIT)) : HI ()) {};
+        hi (double_integer_init_HI <LO, HI> (a)) {};
         
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (unsigned long a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO) ? (a >> (sizeof (LO) * CHAR_BIT)) : HI ()) {};
+        hi (double_integer_init_HI <LO, HI> (a)) {};
         
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (unsigned long long a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO) ? (a >> (sizeof (LO) * CHAR_BIT)) : HI ()) {};
+        hi (double_integer_init_HI <LO, HI> (a)) {};
 
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (signed char a)
@@ -702,8 +714,6 @@ namespace std {
         static const bool has_infinity = false;
         static const bool has_quiet_NaN = false;
         static const bool has_signaling_NaN = false;
-        static const float_denorm_style has_denorm = denorm_absent;
-        static const bool has_denorm_loss = false;
         
         static double_integer <LO, HI> infinity() throw()
             { return double_integer <LO, HI> (); }

@@ -5,7 +5,7 @@
 // double_integer.hpp
 //
 // Author: Jan Ringos, http://Tringi.TrimCore.cz, tringi@trimcore.cz
-// Version: 2.0
+// Version: 2.1
 // Description: Implements common functionality to double the precission
 //              of an little-endian two-complement integer type, both signed
 //              and unsigned.
@@ -36,6 +36,8 @@
 //                 - fixed conversion from negative floating point
 //                 - C style fmod, fmodf, fmodl replaced by std::fmod
 //      20.03.2015 - completed C++11 release
+//      29.09.2023 - removed deprecated numeric_limits denorm_absent/has_denorm_loss
+                   - silenced several comparison warnings
 */
 
 #include <type_traits>
