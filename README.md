@@ -1,4 +1,4 @@
-﻿# doubleinteger
+﻿# template double_integer <LO, HI>
 *Formerly simple int128 class for a bytecode interpreter project long forgotten. Rewritten several times, now supporting much more that originally envisioned, most importantly being usable transparently as if intrinsic integer type.*
 
 ## Usage
