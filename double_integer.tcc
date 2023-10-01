@@ -137,8 +137,8 @@ double_integer <LO, HI> ::operator *= (const double_integer <LO, HI> & _multipli
     this->lo = LO ();
     this->hi = HI ();
     
-    std::size_t i = 0u;
-    std::size_t n = CHAR_BIT * (sizeof (LO) + sizeof (HI));
+    auto i = 0u;
+    auto n = CHAR_BIT * (sizeof (LO) + sizeof (HI));
     
     while (i < n && !!multiplier) {
         if (!!(multiplier.lo & LO (1u))) {
@@ -205,7 +205,7 @@ double_integer <LO, HI> ::div (const double_integer <LO, HI> & _ds,
     double_integer <LO, HI> one;
     ++one;
     
-    std::size_t b = CHAR_BIT * (sizeof (LO) + sizeof (HI));
+    unsigned int b = CHAR_BIT * (sizeof (LO) + sizeof (HI));
     
     while (r < ds) {
         r <<= 1u;
@@ -308,7 +308,7 @@ double_integer <LO, HI> ::operator >>= (unsigned int bits) {
 
 template <typename LO, typename HI>
 template <typename T>
-T double_integer <LO, HI> ::mask (std::size_t n) {
+T double_integer <LO, HI> ::mask (unsigned int n) {
     T m = T ();
     
     ++m;
@@ -325,6 +325,16 @@ namespace {
             return a >> (sizeof (LO) * CHAR_BIT);
         else
             return HI ();
+    }
+    template <typename LO, typename HI, typename T>
+    constexpr HI double_integer_init_HI_signed (const T & a) {
+        if constexpr (sizeof (T) > sizeof (LO))
+            return a >> (sizeof (LO) * CHAR_BIT);
+        else
+        if (a < 0)
+            return HI (-1);
+        else
+            return HI (0);
     }
 }
 
@@ -361,31 +371,22 @@ double_integer <LO, HI> ::double_integer (signed char a)
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (signed short a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO)
-                ? HI (a >> (sizeof (LO) * CHAR_BIT))
-                : HI (a < 0 ? -1 : 0)) {};
+        hi (double_integer_init_HI_signed <LO, HI> (a)) {};
 
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (signed int a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO)
-                ? HI (a >> (sizeof (LO) * CHAR_BIT))
-                : HI (a < 0 ? -1 : 0)) {};
+        hi (double_integer_init_HI_signed <LO, HI> (a)) {};
 
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (signed long a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO)
-                ? HI (a >> (sizeof (LO) * CHAR_BIT))
-                : HI (a < 0 ? -1 : 0)) {};
+        hi (double_integer_init_HI_signed <LO, HI> (a)) {};
 
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (signed long long a)
     :   lo (LO (a)),
-        hi (sizeof (a) > sizeof (LO)
-                ? HI (a >> (sizeof (LO) * CHAR_BIT))
-                : HI (a < 0 ? -1 : 0)) {};
-
+        hi (double_integer_init_HI_signed <LO, HI> (a)) {};
 
 template <typename LO, typename HI>
 double_integer <LO, HI> ::double_integer (float a)

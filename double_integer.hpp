@@ -145,7 +145,7 @@ class double_integer {
 
     // internal implementation details and helpers follow
     private:
-        template <typename T> static T mask (std::size_t);
+        template <typename T> static T mask (unsigned int);
     
 };
 
