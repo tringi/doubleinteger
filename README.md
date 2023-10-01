@@ -1,4 +1,4 @@
-# doubleinteger
+﻿# doubleinteger
 *Formerly simple int128 class for a bytecode interpreter project long forgotten. Rewritten several times, now supporting much more that originally envisioned, most importantly being usable transparently as if intrinsic integer type.*
 
 ## Usage
@@ -15,12 +15,13 @@
 
 ## Key features
 * Binary layout of objects is the same as the data type they simulate for little-endian platform, P.O.D. aka “standard layout type”.
+   * copy in/out using `std::memcpy`
 * The std::numeric_limits is correctly overloaded for every instantiated double_integer.
 * Nesting instantiations is valid way to create 256-bit integers, 512-bit integers and even arbitrarily larger ones.
 
 ## Notes
-* Review needed for constexpr correctness and for simplifications possible with latest C++.
-* Features that I don't use in my projects may not be as thouroughfully tested as the rest of the code.
+* Review needed for constexpr correctness and for possible simplifications with latest C++.
+* Features that I don't use in my projects may not be as thoroughly tested as the rest of the code.
 
 ## License
 This project is a free software available under the zlib license.
